@@ -2,7 +2,33 @@
 	header("Content-type: application/vnd-ms-excel");
 	header("Content-Disposition: attachment; filename=Data_Pemasukan_Pengeluaran.xls");
 	?>
-    <h3>Data Pemasukan</h3>
+    <style>
+    	h1,
+    	h4 {
+    		text-align: center;
+    	}
+
+    	hr.custom-line {
+    		margin-top: 0px;
+    		/* Atur jarak di atas garis */
+    		margin-bottom: 20px;
+    		/* Atur jarak di bawah garis */
+    		border: 0;
+    		border-top: 1px solid #000;
+    		/* Ganti warna dan tipe garis sesuai kebutuhan */
+    	}
+
+    	.right-info {
+    		float: right;
+    		text-align: right;
+    		padding-top: 100px;
+    	}
+    </style>
+
+    <h1>Alfara Motor</h1>
+    <h4>Jl. Sutan Syahrir No.215, Mata Air</h4>
+    <h4>Kec. Padang Selatan., Kota Padang, Sumatera Barat 25121</h4>
+    <hr class="custom-line">
     <table border="1" cellpadding="5">
     	<tr>
     		<th>No</th>
@@ -50,3 +76,10 @@
 			echo "</tr>";
 		}  ?>
     </table>
+
+    <div class="right-info">
+    	<p style="padding-right:90px;">Padang, <?php echo date('Y-m-d'); ?></p>
+    	<p>Pimpinan Toko Alfara Motor</p>
+    	<br>
+    	<p style="padding-right:170px;">Pimpinan</p>
+    </div>
