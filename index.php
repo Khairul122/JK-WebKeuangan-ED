@@ -131,38 +131,56 @@ WHERE tgl_pemasukan = CURDATE() - INTERVAL 7 DAY");
               <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                   <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Pendapatan (Hari Ini)</div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">Rp.<?= number_format($pemasukan_hari_ini['0'], 2, ',', '.'); ?></div>
+                  <?php
+                  // Periksa apakah $pemasukan_hari_ini adalah array dan memiliki elemen pada indeks '0'
+                  if (!empty($pemasukan_hari_ini) && isset($pemasukan_hari_ini[0])) {
+                    echo '<div class="h5 mb-0 font-weight-bold text-gray-800">Rp.' . number_format($pemasukan_hari_ini[0], 2, ',', '.') . '</div>';
+                  } else {
+                    echo '<div class="h5 mb-0 font-weight-bold text-gray-800">Rp.0,00</div>';
+                  }
+                  ?>
                 </div>
                 <div class="col-auto">
                   <i class="fas fa-calendar fa-2x text-gray-300"></i>
                 </div>
               </div>
-            </div> &nbsp Mingguan : Rp.
+            </div>
+            &nbsp Mingguan : Rp.
             <?php
             echo number_format($jumlahmasuk, 2, ',', '.');
             ?>
           </div>
         </div>
 
+
         <!-- Earnings (Monthly) Card Example -->
         <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-danger shadow h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
+    <div class="card border-left-danger shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Pengeluaran (Hari Ini)</div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">Rp.<?= number_format($pengeluaran_hari_ini['0'], 2, ',', '.'); ?></div>
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Pengeluaran (Hari Ini)</div>
+                    <?php
+                    // Periksa apakah $pengeluaran_hari_ini adalah array dan memiliki elemen pada indeks '0'
+                    if (!empty($pengeluaran_hari_ini) && isset($pengeluaran_hari_ini[0])) {
+                        echo '<div class="h5 mb-0 font-weight-bold text-gray-800">Rp.' . number_format($pengeluaran_hari_ini[0], 2, ',', '.') . '</div>';
+                    } else {
+                        echo '<div class="h5 mb-0 font-weight-bold text-gray-800">Rp.0,00</div>';
+                    }
+                    ?>
                 </div>
                 <div class="col-auto">
-                  <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
                 </div>
-              </div>
-            </div> &nbsp Mingguan : Rp.
-            <?php
-            echo number_format($jumlahkeluar, 2, ',', '.');
-            ?>
-          </div>
+            </div>
         </div>
+        &nbsp Mingguan : Rp.
+        <?php
+        echo number_format($jumlahkeluar, 2, ',', '.');
+        ?>
+    </div>
+</div>
+
 
         <!-- Earnings (Monthly) Card Example -->
         <div class="col-xl-3 col-md-6 mb-4">
