@@ -86,95 +86,87 @@ WHERE tgl_pengeluaran = CURDATE() - INTERVAL 7 DAY");
 
             <!-- Area Chart -->
 
+
             <!-- DataTales Example -->
             <div class="row">
                 <div class="col-12">
+                    <div class="py-2">
+                        <a href="neraca-saldo-tambah.php" class="btn btn-success" style="margin:5px"><i class="fa fa-plus"></i> Tambah Data</a>
+                        <a href="neraca-saldo-lihat.php" class="btn btn-primary" style="margin:5px"><i class="fa fa-eye"></i> Lihat Data Neraca Saldo</a>
+                    </div>
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Arus Kas</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Neraca Saldo</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <?php
-                                require 'koneksi.php';
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Tanggal</th>
+                                            <th>Nama Akun</th>
+                                            <th>Saldo Awal Kredit</th>
+                                            <th>Saldo Awal Debit</th>
+                                            <th>Pergerakan Kredit</th>
+                                            <th>Pergerakan Debit</th>
+                                            <th>Kategori</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        // Sisipkan file koneksi.php yang berisi koneksi ke database
+                                        include('koneksi.php');
 
-                                // Query untuk mengambil data pemasukan
-                                $query_pemasukan = "SELECT tgl_pemasukan AS tanggal, sumber AS deskripsi, jumlah AS uang_masuk, '' AS uang_keluar FROM pemasukan";
-                                $result_pemasukan = mysqli_query($koneksi, $query_pemasukan);
+                                        // Query untuk mengambil data dari tabel neraca_saldo
+                                        $sql = "SELECT * FROM neraca_saldo";
+                                        $result = $koneksi->query($sql);
 
-                                // Query untuk mengambil data pengeluaran
-                                $query_pengeluaran = "SELECT tgl_pengeluaran AS tanggal, sumber AS deskripsi, '' AS uang_masuk, jumlah AS uang_keluar FROM pengeluaran";
-                                $result_pengeluaran = mysqli_query($koneksi, $query_pengeluaran);
+                                        if ($result->num_rows > 0) {
+                                            $no = 1;
+                                            // Output data dari setiap baris
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo "<tr>";
+                                                echo "<td>" . $no . "</td>";
+                                                echo "<td>" . date('d F Y', strtotime($row["tanggal"])) . "</td>";
+                                                echo "<td>" . $row["nama_akun"] . "</td>";
+                                                echo "<td>" . $row["saldo_awal_kredit"] . "</td>";
+                                                echo "<td>" . $row["saldo_awal_debit"] . "</td>";
+                                                echo "<td>" . $row["pergerakan_kredit"] . "</td>";
+                                                echo "<td>" . $row["pergerakan_debit"] . "</td>";
+                                                // Mengonversi nilai status menjadi kategori
+                                                $kategori = "";
+                                                switch ($row["status"]) {
+                                                    case 1:
+                                                        $kategori = "Asset";
+                                                        break;
+                                                    case 2:
+                                                        $kategori = "Kewajiban";
+                                                        break;
+                                                    case 3:
+                                                        $kategori = "Ekuitas";
+                                                        break;
+                                                    case 4:
+                                                        $kategori = "Pendapatan";
+                                                        break;
+                                                    case 5:
+                                                        $kategori = "Beban";
+                                                        break;
+                                                    default:
+                                                        $kategori = "Tidak Diketahui";
+                                                }
+                                                echo "<td>" . $kategori . "</td>";
+                                                echo "</tr>";
+                                                $no++;
+                                            }
+                                        } else {
+                                            echo "0 results";
+                                        }
+                                        $koneksi->close();
+                                        ?>
 
-                                // Menggabungkan hasil query pemasukan dan pengeluaran
-                                $result_combined = array();
-                                while ($row_pemasukan = mysqli_fetch_assoc($result_pemasukan)) {
-                                    $result_combined[] = $row_pemasukan;
-                                }
-                                while ($row_pengeluaran = mysqli_fetch_assoc($result_pengeluaran)) {
-                                    $result_combined[] = $row_pengeluaran;
-                                }
-
-                                // Fungsi untuk mengurutkan array multidimensi berdasarkan tanggal secara descending
-                                usort($result_combined, function ($a, $b) {
-                                    return strtotime($b['tanggal']) - strtotime($a['tanggal']);
-                                });
-
-                                // Inisialisasi variabel saldo akhir
-                                $saldo_akhir = 0;
-
-                                // Tampilkan data pada tabel
-                                echo '<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">';
-                                echo '<thead>';
-                                echo '<tr>';
-                                echo '<th>No</th>';
-                                echo '<th>Tanggal</th>';
-                                echo '<th>Deskripsi</th>';
-                                echo '<th>Uang Masuk</th>';
-                                echo '<th>Uang Keluar</th>';
-                                echo '<th>Saldo Akhir</th>';
-                                echo '</tr>';
-                                echo '</thead>';
-                                echo '<tbody>';
-
-                                // Tampilkan data pemasukan dan pengeluaran
-                                $no = 1;
-                                foreach ($result_combined as $row) {
-                                    echo '<tr>';
-                                    echo '<td>' . $no . '</td>';
-                                    echo '<td>' . date('d F Y', strtotime($row['tanggal'])) . '</td>';
-                                    echo '<td>' . $row['deskripsi'] . '</td>';
-                                    echo '<td>' . ($row['uang_masuk'] !== '' ? $row['uang_masuk'] : '-') . '</td>';
-                                    echo '<td>' . ($row['uang_keluar'] !== '' ? $row['uang_keluar'] : '-') . '</td>';
-
-                                    // Menghitung saldo akhir
-                                    $saldo_akhir += (is_numeric($row['uang_masuk']) ? $row['uang_masuk'] : 0) - (is_numeric($row['uang_keluar']) ? $row['uang_keluar'] : 0);
-
-                                    echo '<td>' . $saldo_akhir . '</td>';
-                                    echo '</tr>';
-                                    $no++;
-                                }
-
-                                // Hitung total
-                                $total_masuk = array_sum(array_column($result_combined, 'uang_masuk'));
-                                $total_keluar = array_sum(array_column($result_combined, 'uang_keluar'));
-
-                                // Tampilkan total di bawah tabel
-                                echo '<tr>';
-                                echo '<td colspan="3" style="text-align:center;">Total</td>';
-                                echo '<td>' . $total_masuk . '</td>';
-                                echo '<td>' . $total_keluar . '</td>';
-                                echo '<td>' . $saldo_akhir . '</td>';
-                                echo '</tr>';
-
-                                echo '</tbody>';
-                                echo '</table>';
-
-                                // Tutup koneksi (jika tidak menggunakan persistent connection)
-                                mysqli_close($koneksi);
-                                ?>
-
-
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -203,7 +195,6 @@ WHERE tgl_pengeluaran = CURDATE() - INTERVAL 7 DAY");
     <!-- Logout Modal-->
     <?php require 'logout-modal.php'; ?>
 
-    <!-- Bootstrap core JavaScript-->
 
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>

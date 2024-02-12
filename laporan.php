@@ -104,7 +104,8 @@ require 'cek-sesi.php';
                                     <td colspan="3" style="text-align: left;">Laba Rugi</td>
                                     <td>
                                         <!-- Button untuk modal -->
-                                        <a href="export-laba-rugi.php" type="button" class="btn btn-primary btn-md"><i class="fa fa-download"></i></a>
+                                        <a href="export-laba-rugi.php" type="button" class="btn btn-primary btn-md" target="_blank"><i class="fa fa-download"></i></a>
+
                                     </td>
                                 </tr>
 

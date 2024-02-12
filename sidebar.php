@@ -46,21 +46,21 @@
           </li>
 
           <li class="nav-item">
-              <a class="nav-link collapsed" href="arus_kas.php">
+              <a class="nav-link collapsed" href="arus-kas.php">
                   <i class="fas fa-fw fa-book"></i>
                   <span>Arus Kas</span>
               </a>
           </li>
 
           <li class="nav-item">
-              <a class="nav-link collapsed" href="neraca_saldo.php">
+              <a class="nav-link collapsed" href="neraca-saldo.php">
                   <i class="fas fa-fw fa-book"></i>
                   <span>Neraca Saldo</span>
               </a>
           </li>
 
           <li class="nav-item">
-              <a class="nav-link collapsed" href="laba_rugi.php">
+              <a class="nav-link collapsed" href="laba-rugi.php">
                   <i class="fas fa-fw fa-book"></i>
                   <span>Laba Rugi</span>
               </a>

@@ -58,83 +58,83 @@ ob_start();
 <table>
     <thead>
         <tr>
-            <th>No</th>
-            <th>Tanggal</th>
-            <th>Deskripsi</th>
-            <th>Uang Masuk</th>
-            <th>Uang Keluar</th>
-            <th>Saldo Akhir</th>
+            <th colspan="2">Arus Kas Dari Data Operasional</th>
         </tr>
     </thead>
     <tbody>
         <?php
-        require 'koneksi.php';
+        // Sisipkan file koneksi.php yang berisi koneksi ke database
+        include('koneksi.php');
 
-        // Query untuk mengambil data pemasukan
-        $query_pemasukan = "SELECT tgl_pemasukan AS tanggal, sumber AS deskripsi, jumlah AS uang_masuk, '' AS uang_keluar FROM pemasukan";
-        $result_pemasukan = mysqli_query($koneksi, $query_pemasukan);
+        // Query SQL untuk mengambil data dari tabel arus_kas dengan status 1 (operasional) atau 2 (keuangan)
+        $sql = "SELECT sumber, jumlah, status FROM arus_kas WHERE status IN (1, 2)";
 
-        // Query untuk mengambil data pengeluaran
-        $query_pengeluaran = "SELECT tgl_pengeluaran AS tanggal, sumber AS deskripsi, '' AS uang_masuk, jumlah AS uang_keluar FROM pengeluaran";
-        $result_pengeluaran = mysqli_query($koneksi, $query_pengeluaran);
+        // Lakukan query untuk data operasional dan keuangan
+        $result = $koneksi->query($sql);
 
-        // Menggabungkan hasil query pemasukan dan pengeluaran
-        $result_combined = array();
-        while ($row_pemasukan = mysqli_fetch_assoc($result_pemasukan)) {
-            $result_combined[] = $row_pemasukan;
-        }
-        while ($row_pengeluaran = mysqli_fetch_assoc($result_pengeluaran)) {
-            $result_combined[] = $row_pengeluaran;
-        }
+        // Variabel untuk menyimpan total arus kas dari data operasional dan keuangan
+        $total_arus_kas_operasional = 0;
+        $total_arus_kas_keuangan = 0;
+        $total_arus_kas_semua = 0;
 
-        // Fungsi untuk mengurutkan array multidimensi berdasarkan tanggal secara descending
-        usort($result_combined, function ($a, $b) {
-            return strtotime($b['tanggal']) - strtotime($a['tanggal']);
-        });
+        // Jika hasil query tidak kosong
+        if ($result->num_rows > 0) {
+            // Output data dari setiap baris
+            while ($row = $result->fetch_assoc()) {
+                echo "<tr>
+                                            <td>" . $row['sumber'] . "</td>
+                                            <td>" . $row['jumlah'] . "</td>
+                                        </tr>";
 
-        // Inisialisasi variabel saldo akhir
-        $saldo_akhir = 0;
+                // Tambahkan jumlah ke total arus kas sesuai status
+                if ($row['status'] == 1) {
+                    $total_arus_kas_operasional += $row['jumlah'];
+                } elseif ($row['status'] == 2) {
+                    $total_arus_kas_keuangan += $row['jumlah'];
+                }
 
-        // Tampilkan data pada tabel
-        $no = 1;
-        foreach ($result_combined as $row) {
-            echo '<tr>';
-            echo '<td>' . $no . '</td>';
-            echo '<td>' . date('d F Y', strtotime($row['tanggal'])) . '</td>';
-            echo '<td>' . $row['deskripsi'] . '</td>';
-            echo '<td>' . ($row['uang_masuk'] !== '' ? $row['uang_masuk'] : '-') . '</td>';
-            echo '<td>' . ($row['uang_keluar'] !== '' ? $row['uang_keluar'] : '-') . '</td>';
-
-            // Menghitung saldo akhir
-            $saldo_akhir += (is_numeric($row['uang_masuk']) ? $row['uang_masuk'] : 0) - (is_numeric($row['uang_keluar']) ? $row['uang_keluar'] : 0);
-
-            echo '<td>' . $saldo_akhir . '</td>';
-            echo '</tr>';
-            $no++;
+                // Tambahkan jumlah ke total arus kas semua
+                $total_arus_kas_semua += $row['jumlah'];
+            }
+        } else {
+            echo "<tr><td colspan='2'>Tidak ada data dengan status operasional atau keuangan</td></tr>";
         }
 
-        // Hitung total
-        $total_masuk = array_sum(array_column($result_combined, 'uang_masuk'));
-        $total_keluar = array_sum(array_column($result_combined, 'uang_keluar'));
-
-        // Tampilkan total di bawah tabel
-        echo '<tr>';
-        echo '<td colspan="3" style="text-align:center;">Total</td>';
-        echo '<td>' . $total_masuk . '</td>';
-        echo '<td>' . $total_keluar . '</td>';
-        echo '<td>' . $saldo_akhir . '</td>';
-        echo '</tr>';
-
-        mysqli_close($koneksi);
+        // Tutup koneksi
+        $koneksi->close();
         ?>
     </tbody>
+    <tr>
+        <td>Total Arus Kas Dari Data Operasional</td>
+        <td><?php echo $total_arus_kas_operasional; ?></td>
+    </tr>
+    <tbody>
+        <tr>
+            <th colspan="2">Arus Kas Dari Data Keuangan</th>
+        </tr>
+        <tr>
+            <td>Total Arus Kas Dari Data Keuangan</td>
+            <td><?php echo $total_arus_kas_keuangan; ?></td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>Saldo Kas</td>
+            <td><?php echo $total_arus_kas_semua; ?></td>
+        </tr>
+    </tfoot>
 </table>
 
-<div class="right-info">
-    <p style="padding-right:55px;">Padang, <?php echo date('Y-m-d'); ?></p>
-    <p>Pimpinan Toko Alfara Motor</p>
-    <br>
-    <p style="padding-right:125px;">Pimpinan</p>
+<div style="margin-top: 20px; text-align: left;">
+    <div style="float: right;">
+        Padang, <?php echo date('j F Y'); ?><br>
+        Pimpinan Toko Alfara Motor
+        <br>
+        <br>
+        <br>
+        <br>
+        (Pimpinan)
+    </div>
 </div>
 
 <?php

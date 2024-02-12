@@ -56,91 +56,259 @@ ob_start();
 
 <!-- Tabel data -->
 <table>
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>Keterangan</th>
-            <th>Debit</th>
-            <th>Kredit</th>
-        </tr>
-    </thead>
-    <tbody>
+    <tr>
+        <th rowspan="2" style="text-align:center">Nama Akun</th>
+        <th colspan="2" style="text-align:center">Saldo Awal</th>
+        <th colspan="2" style="text-align:center">Pergerakan</th>
+        <th colspan="2" style="text-align:center">Saldo Akhir</th>
+
+    </tr>
+    <tr>
+        <th style="text-align:center">Debit</th>
+        <th style="text-align:center">Credit</th>
+        <th style="text-align:center">Debit</th>
+        <th style="text-align:center">Credit</th>
+        <th style="text-align:center">Debit</th>
+        <th style="text-align:center">Credit</th>
+    </tr>
+    <tr>
+        <th colspan="8" style="text-align:left">Asset</th>
+    </tr>
+    <?php
+    include('koneksi.php');
+    $sql = "SELECT * FROM neraca_saldo WHERE status = 1";
+    $result = $koneksi->query($sql);
+
+    if ($result->num_rows > 0) {
+        // Output data dari setiap baris
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>" . $row["nama_akun"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["saldo_awal_debit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["saldo_awal_kredit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["pergerakan_debit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["pergerakan_kredit"] . "</td>";
+            $saldo_akhir_debit = $row["saldo_awal_debit"] + $row["pergerakan_debit"];
+            $saldo_akhir_kredit = $row["saldo_awal_kredit"] + $row["pergerakan_kredit"];
+            echo "<td style='text-align:right'>" . $saldo_akhir_debit . "</td>";
+            echo "<td style='text-align:right'>" . $saldo_akhir_kredit . "</td>";
+            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='7' style='text-align:center'>Tidak ada data</td></tr>";
+    }
+    $koneksi->close();
+    ?>
+    <tr>
+        <th colspan="8" style="text-align:left">Kewajiban</th>
+    </tr>
+    <?php
+    include('koneksi.php');
+    $sql = "SELECT * FROM neraca_saldo WHERE status = 2";
+    $result = $koneksi->query($sql);
+
+    if ($result->num_rows > 0) {
+        // Output data dari setiap baris
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>" . $row["nama_akun"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["saldo_awal_debit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["saldo_awal_kredit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["pergerakan_debit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["pergerakan_kredit"] . "</td>";
+            $saldo_akhir_debit = $row["saldo_awal_debit"] + $row["pergerakan_debit"];
+            $saldo_akhir_kredit = $row["saldo_awal_kredit"] + $row["pergerakan_kredit"];
+            echo "<td style='text-align:right'>" . $saldo_akhir_debit . "</td>";
+            echo "<td style='text-align:right'>" . $saldo_akhir_kredit . "</td>";
+            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='7' style='text-align:center'>Tidak ada data</td></tr>";
+    }
+    $koneksi->close();
+    ?>
+    <tr>
+        <th colspan="8" style="text-align:left">Ekuitas</th>
+    </tr>
+    <?php
+    include('koneksi.php');
+    $sql = "SELECT * FROM neraca_saldo WHERE status = 3";
+    $result = $koneksi->query($sql);
+
+    if ($result->num_rows > 0) {
+        // Output data dari setiap baris
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>" . $row["nama_akun"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["saldo_awal_debit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["saldo_awal_kredit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["pergerakan_debit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["pergerakan_kredit"] . "</td>";
+            $saldo_akhir_debit = $row["saldo_awal_debit"] + $row["pergerakan_debit"];
+            $saldo_akhir_kredit = $row["saldo_awal_kredit"] + $row["pergerakan_kredit"];
+            echo "<td style='text-align:right'>" . $saldo_akhir_debit . "</td>";
+            echo "<td style='text-align:right'>" . $saldo_akhir_kredit . "</td>";
+            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='7' style='text-align:center'>Tidak ada data</td></tr>";
+    }
+    $koneksi->close();
+    ?>
+    <tr>
+        <th colspan="8" style="text-align:left">Pendapatan</th>
+    </tr>
+    <?php
+    include('koneksi.php');
+    $sql = "SELECT * FROM neraca_saldo WHERE status = 4";
+    $result = $koneksi->query($sql);
+
+    if ($result->num_rows > 0) {
+        // Output data dari setiap baris
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>" . $row["nama_akun"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["saldo_awal_debit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["saldo_awal_kredit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["pergerakan_debit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["pergerakan_kredit"] . "</td>";
+            $saldo_akhir_debit = $row["saldo_awal_debit"] + $row["pergerakan_debit"];
+            $saldo_akhir_kredit = $row["saldo_awal_kredit"] + $row["pergerakan_kredit"];
+            echo "<td style='text-align:right'>" . $saldo_akhir_debit . "</td>";
+            echo "<td style='text-align:right'>" . $saldo_akhir_kredit . "</td>";
+            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='7' style='text-align:center'>Tidak ada data</td></tr>";
+    }
+    $koneksi->close();
+    ?>
+    <tr>
+        <th colspan="8" style="text-align:left">Beban</th>
+    </tr>
+    <?php
+    include('koneksi.php');
+    $sql = "SELECT * FROM neraca_saldo WHERE status = 5";
+    $result = $koneksi->query($sql);
+
+    if ($result->num_rows > 0) {
+        // Output data dari setiap baris
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>" . $row["nama_akun"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["saldo_awal_debit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["saldo_awal_kredit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["pergerakan_debit"] . "</td>";
+            echo "<td style='text-align:right'>" . $row["pergerakan_kredit"] . "</td>";
+            $saldo_akhir_debit = $row["saldo_awal_debit"] + $row["pergerakan_debit"];
+            $saldo_akhir_kredit = $row["saldo_awal_kredit"] + $row["pergerakan_kredit"];
+            echo "<td style='text-align:right'>" . $saldo_akhir_debit . "</td>";
+            echo "<td style='text-align:right'>" . $saldo_akhir_kredit . "</td>";
+            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='7' style='text-align:center'>Tidak ada data</td></tr>";
+    }
+    $koneksi->close();
+    ?>
+    <tr>
+        <th style="text-align:left">Total</th>
         <?php
-        require 'koneksi.php';
+        include('koneksi.php');
 
-        // Query untuk mengambil data pemasukan
-        $query_pemasukan = "SELECT sumber, jumlah, status FROM pemasukan";
-        $result_pemasukan = mysqli_query($koneksi, $query_pemasukan);
+        // Query untuk menghitung total saldo_awal_debit
+        $sql_total_debit = "SELECT SUM(saldo_awal_debit) AS total_debit FROM neraca_saldo";
+        $result_total_debit = $koneksi->query($sql_total_debit);
 
-        // Query untuk mengambil data pengeluaran
-        $query_pengeluaran = "SELECT sumber, jumlah, status FROM pengeluaran";
-        $result_pengeluaran = mysqli_query($koneksi, $query_pengeluaran);
-
-        $no = 1;
-        $total_debit = 0;
-        $total_kredit = 0;
-
-        // Tampilkan data pada tabel
-        while (($row_pemasukan = mysqli_fetch_assoc($result_pemasukan)) || ($row_pengeluaran = mysqli_fetch_assoc($result_pengeluaran))) {
-            echo '<tr>';
-            echo '<td>' . $no . '</td>';
-
-            if ($row_pemasukan) {
-                echo '<td>' . $row_pemasukan['sumber'] . '</td>';
-                if ($row_pemasukan['status'] == 1) {
-                    echo '<td>' . $row_pemasukan['jumlah'] . '</td>';
-                    echo '<td></td>';
-                    $total_debit += $row_pemasukan['jumlah'];
-                } elseif ($row_pemasukan['status'] == 2) {
-                    echo '<td></td>';
-                    echo '<td>' . $row_pemasukan['jumlah'] . '</td>';
-                    $total_kredit += $row_pemasukan['jumlah'];
-                }
-            } else {
-                echo '<td>' . $row_pengeluaran['sumber'] . '</td>';
-                if ($row_pengeluaran['status'] == 1) {
-                    echo '<td>' . $row_pengeluaran['jumlah'] . '</td>';
-                    echo '<td></td>';
-                    $total_debit += $row_pengeluaran['jumlah'];
-                } elseif ($row_pengeluaran['status'] == 2) {
-                    echo '<td></td>';
-                    echo '<td>' . $row_pengeluaran['jumlah'] . '</td>';
-                    $total_kredit += $row_pengeluaran['jumlah'];
-                }
-            }
-
-            echo '</tr>';
-            $no++;
-        }
-
-        // Tampilkan total pada baris terakhir
-        echo '<tr>';
-        echo '<td colspan="2" style="text-align:center;">Total</td>';
-        echo '<td>' . $total_debit . '</td>';
-        echo '<td>' . $total_kredit . '</td>';
-        echo '</tr>';
-
-        // Tampilkan status Balance/Tidak Balance
-        echo '<tr>';
-        echo '<td colspan="4" style="text-align:center;">';
-        if ($total_kredit > $total_debit) {
-            echo 'Tidak Balance';
-        } elseif ($total_debit > $total_kredit) {
-            echo 'Balance';
+        // Periksa jika query berhasil dijalankan
+        if ($result_total_debit) {
+            $row_total_debit = $result_total_debit->fetch_assoc();
+            $total_debit = $row_total_debit['total_debit'];
         } else {
-            echo 'Balance';
+            $total_debit = 0; // Jika query tidak berhasil, total dianggap 0
         }
-        echo '</td>';
-        echo '</tr>';
+
+        // Query untuk menghitung total saldo_awal_kredit
+        $sql_total_kredit = "SELECT SUM(saldo_awal_kredit) AS total_kredit FROM neraca_saldo";
+        $result_total_kredit = $koneksi->query($sql_total_kredit);
+
+        // Periksa jika query berhasil dijalankan
+        if ($result_total_kredit) {
+            $row_total_kredit = $result_total_kredit->fetch_assoc();
+            $total_kredit = $row_total_kredit['total_kredit'];
+        } else {
+            $total_kredit = 0; // Jika query tidak berhasil, total dianggap 0
+        }
+
+        // Query untuk menghitung total pergerakan_debit
+        $sql_total_pergerakan_debit = "SELECT SUM(pergerakan_debit) AS total_pergerakan_debit FROM neraca_saldo";
+        $result_total_pergerakan_debit = $koneksi->query($sql_total_pergerakan_debit);
+
+        // Periksa jika query berhasil dijalankan
+        if ($result_total_pergerakan_debit) {
+            $row_total_pergerakan_debit = $result_total_pergerakan_debit->fetch_assoc();
+            $total_pergerakan_debit = $row_total_pergerakan_debit['total_pergerakan_debit'];
+        } else {
+            $total_pergerakan_debit = 0; // Jika query tidak berhasil, total dianggap 0
+        }
+
+        // Query untuk menghitung total pergerakan_kredit
+        $sql_total_pergerakan_kredit = "SELECT SUM(pergerakan_kredit) AS total_pergerakan_kredit FROM neraca_saldo";
+        $result_total_pergerakan_kredit = $koneksi->query($sql_total_pergerakan_kredit);
+
+        // Periksa jika query berhasil dijalankan
+        if ($result_total_pergerakan_kredit) {
+            $row_total_pergerakan_kredit = $result_total_pergerakan_kredit->fetch_assoc();
+            $total_pergerakan_kredit = $row_total_pergerakan_kredit['total_pergerakan_kredit'];
+        } else {
+            $total_pergerakan_kredit = 0; // Jika query tidak berhasil, total dianggap 0
+        }
+
+        // Query untuk menghitung total saldo_akhir_debit
+        $sql_total_saldo_akhir_debit = "SELECT SUM(saldo_awal_debit + pergerakan_debit) AS total_saldo_akhir_debit FROM neraca_saldo";
+        $result_total_saldo_akhir_debit = $koneksi->query($sql_total_saldo_akhir_debit);
+
+        // Periksa jika query berhasil dijalankan
+        if ($result_total_saldo_akhir_debit) {
+            $row_total_saldo_akhir_debit = $result_total_saldo_akhir_debit->fetch_assoc();
+            $total_saldo_akhir_debit = $row_total_saldo_akhir_debit['total_saldo_akhir_debit'];
+        } else {
+            $total_saldo_akhir_debit = 0; // Jika query tidak berhasil, total dianggap 0
+        }
+
+        // Query untuk menghitung total saldo_akhir_kredit
+        $sql_total_saldo_akhir_kredit = "SELECT SUM(saldo_awal_kredit + pergerakan_kredit) AS total_saldo_akhir_kredit FROM neraca_saldo";
+        $result_total_saldo_akhir_kredit = $koneksi->query($sql_total_saldo_akhir_kredit);
+
+        // Periksa jika query berhasil dijalankan
+        if ($result_total_saldo_akhir_kredit) {
+            $row_total_saldo_akhir_kredit = $result_total_saldo_akhir_kredit->fetch_assoc();
+            $total_saldo_akhir_kredit = $row_total_saldo_akhir_kredit['total_saldo_akhir_kredit'];
+        } else {
+            $total_saldo_akhir_kredit = 0; // Jika query tidak berhasil, total dianggap 0
+        }
+
+        $koneksi->close();
         ?>
-    </tbody>
+        <td style='text-align:right'><?php echo $total_debit; ?></td>
+        <td style='text-align:right'><?php echo $total_kredit; ?></td>
+        <td style='text-align:right'><?php echo $total_pergerakan_debit; ?></td>
+        <td style='text-align:right'><?php echo $total_pergerakan_kredit; ?></td>
+        <td style='text-align:right'><?php echo $total_saldo_akhir_debit; ?></td>
+        <td style='text-align:right'><?php echo $total_saldo_akhir_kredit; ?></td>
+    </tr>
 </table>
 
-<div class="right-info">
-    <p style="padding-right:55px;">Padang, <?php echo date('Y-m-d'); ?></p>
-    <p>Pimpinan Toko Alfara Motor</p>
-    <br>
-    <p style="padding-right:125px;">Pimpinan</p>
+<div style="margin-top: 20px; text-align: left;">
+    <div style="float: right;">
+        Padang, <?php echo date('j F Y'); ?><br>
+        Pimpinan Toko Alfara Motor
+        <br>
+        <br>
+        <br>
+        <br>
+        (Pimpinan)
+    </div>
 </div>
 
 <?php

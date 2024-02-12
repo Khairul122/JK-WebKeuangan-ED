@@ -87,111 +87,83 @@ WHERE tgl_pengeluaran = CURDATE() - INTERVAL 7 DAY");
             <!-- Area Chart -->
 
 
+
+
             <!-- DataTales Example -->
             <div class="row">
                 <div class="col-12">
+                    <div class="py-2">
+                        <a href="laba-rugi-tambah.php" class="btn btn-success" style="margin:5px"><i class="fa fa-plus"></i> Tambah Data</a>
+                        <a href="laba-rugi-lihat.php" class="btn btn-primary" style="margin:5px"><i class="fa fa-eye"></i> Lihat Data Laba Rugi</a>
+                    </div>
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Neraca Saldo</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Laba Rugi</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <?php
-                                require 'koneksi.php';
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Tanggal</th>
+                                            <th>Sumber</th>
+                                            <th>Jumlah</th>
+                                            <th>Kategori</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        // Sisipkan file koneksi.php yang berisi koneksi ke database
+                                        include('koneksi.php');
 
-                                // Query untuk mengambil data pemasukan
-                                $query_pemasukan = "SELECT sumber, jumlah, status FROM pemasukan";
-                                $result_pemasukan = mysqli_query($koneksi, $query_pemasukan);
+                                        // Query untuk menampilkan data dari tabel laba_rugi
+                                        $query = "SELECT * FROM laba_rugi WHERE id_user = 1"; // Mengambil data dengan id_user = 1, sesuaikan dengan kebutuhan
 
-                                // Query untuk mengambil data pengeluaran
-                                $query_pengeluaran = "SELECT sumber, jumlah, status FROM pengeluaran";
-                                $result_pengeluaran = mysqli_query($koneksi, $query_pengeluaran);
+                                        // Jalankan query
+                                        $result = mysqli_query($koneksi, $query);
 
-                                // Inisialisasi variabel total
-                                $total_debit = 0;
-                                $total_kredit = 0;
+                                        // Variable untuk nomor urut
+                                        $no = 1;
 
-                                // Tampilkan data pada tabel
-                                echo '<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">';
-                                echo '<thead>';
-                                echo '<tr>';
-                                echo '<th>No</th>';
-                                echo '<th>Keterangan</th>';
-                                echo '<th>Debit</th>';
-                                echo '<th>Kredit</th>';
-                                echo '</tr>';
-                                echo '</thead>';
-                                echo '<tbody>';
+                                        // Periksa apakah query berhasil dijalankan
+                                        if ($result) {
+                                            // Loop untuk menampilkan data
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                echo "<tr>";
+                                                echo "<td>" . $no++ . "</td>";
+                                                echo "<td>" . date('d F Y', strtotime($row["tanggal"])) . "</td>";
+                                                echo "<td>" . $row['sumber'] . "</td>";
+                                                echo "<td>" . $row['jumlah'] . "</td>";
+                                                // Tampilkan kategori berdasarkan nilai status
+                                                echo "<td>";
+                                                switch ($row['status']) {
+                                                    case 1:
+                                                        echo "Pendapatan";
+                                                        break;
+                                                    case 2:
+                                                        echo "Harga Pokok";
+                                                        break;
+                                                    case 3:
+                                                        echo "Biaya Operasional";
+                                                        break;
+                                                    default:
+                                                        echo "-";
+                                                        break;
+                                                }
+                                                echo "</td>";
+                                                echo "</tr>";
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='5'>Tidak ada data</td></tr>";
+                                        }
 
-                                // Tampilkan data pemasukan
-                                $no = 1;
-                                while ($row_pemasukan = mysqli_fetch_assoc($result_pemasukan)) {
-                                    echo '<tr>';
-                                    echo '<td>' . $no . '</td>';
-                                    echo '<td>' . $row_pemasukan['sumber'] . '</td>';
-                                    if ($row_pemasukan['status'] == 1) {
-                                        echo '<td>' . $row_pemasukan['jumlah'] . '</td>';
-                                        echo '<td></td>'; // Kolom Kredit diisi kosong jika status 1
-                                        $total_debit += $row_pemasukan['jumlah'];
-                                    } elseif ($row_pemasukan['status'] == 2) {
-                                        echo '<td></td>'; // Kolom Jumlah diisi kosong jika status 2
-                                        echo '<td>' . $row_pemasukan['jumlah'] . '</td>';
-                                        $total_kredit += $row_pemasukan['jumlah'];
-                                    }
-                                    echo '</tr>';
-                                    $no++;
-                                }
+                                        // Tutup koneksi ke database
+                                        mysqli_close($koneksi);
+                                        ?>
+                                    </tbody>
 
-                                // Tampilkan data pengeluaran
-                                while ($row_pengeluaran = mysqli_fetch_assoc($result_pengeluaran)) {
-                                    echo '<tr>';
-                                    echo '<td>' . $no . '</td>';
-                                    echo '<td>' . $row_pengeluaran['sumber'] . '</td>';
-                                    if ($row_pengeluaran['status'] == 1) {
-                                        echo '<td>' . $row_pengeluaran['jumlah'] . '</td>';
-                                        echo '<td></td>'; // Kolom Kredit diisi kosong jika status 1
-                                        $total_debit += $row_pengeluaran['jumlah'];
-                                    } elseif ($row_pengeluaran['status'] == 2) {
-                                        echo '<td></td>'; // Kolom Jumlah diisi kosong jika status 2
-                                        echo '<td>' . $row_pengeluaran['jumlah'] . '</td>';
-                                        $total_kredit += $row_pengeluaran['jumlah'];
-                                    }
-                                    echo '</tr>';
-                                    $no++;
-                                }
-
-                                // Tampilkan total pada baris terakhir
-                                echo '<tr>';
-                                echo '<td colspan="2" style="text-align:center;">Total</td>';
-                                echo '<td>' . $total_debit . '</td>';
-                                echo '<td>' . $total_kredit . '</td>';
-                                echo '</tr>';
-
-                                // Tampilkan status Balance/Tidak Balance
-                                echo '<tr>';
-                                echo '<td colspan="4" style="text-align:center;">';
-                                if ($total_kredit > $total_debit) {
-                                    echo 'Tidak Balance';
-                                } elseif ($total_debit > $total_kredit) {
-                                    echo 'Balance';
-                                } else {
-                                    echo 'Balance'; // Jika jumlah Debit dan Kredit sama, dianggap Balance
-                                }
-                                echo '</td>';
-                                echo '</tr>';
-
-                                echo '</tbody>';
-                                echo '</table>';
-
-                                // Tutup koneksi (jika tidak menggunakan persistent connection)
-                                mysqli_close($koneksi);
-                                ?>
-
-
-
-
-
-
+                                </table>
                             </div>
                         </div>
                     </div>

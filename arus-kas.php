@@ -72,13 +72,6 @@ WHERE tgl_pengeluaran = CURDATE() - INTERVAL 7 DAY");
             <!-- Content Row -->
             <div class="row">
 
-                <!-- Content Column -->
-                <div class="col-lg-6 mb-4">
-
-                    <!-- Project Card Example -->
-
-                </div>
-
 
 
             </div>
@@ -86,87 +79,86 @@ WHERE tgl_pengeluaran = CURDATE() - INTERVAL 7 DAY");
 
             <!-- Area Chart -->
 
-
-
-
             <!-- DataTales Example -->
             <div class="row">
                 <div class="col-12">
+                    <div class="py-2">
+                        <a href="arus-kas-tambah.php" class="btn btn-success" style="margin:5px"><i class="fa fa-plus"></i> Tambah Data</a>
+                        <a href="arus-kas-lihat.php" class="btn btn-primary" style="margin:5px"><i class="fa fa-eye"></i> Lihat Data Arus Kas</a>
+                    </div>
+
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Laba Rugi</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Arus Kas</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <div class="table-responsive">
-                                    <?php
-                                    require 'koneksi.php';
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Tanggal</th>
+                                            <th>Deskirpsi</th>
+                                            <th>Nominal</th>
+                                            <th>Kategori</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        // Query SQL untuk mengambil data dari tabel arus_kas
+                                        $sql = "SELECT * FROM arus_kas";
 
-                                    // Query untuk mengambil total pemasukan
-                                    $query_total_pemasukan = "SELECT SUM(jumlah) AS total_pemasukan FROM pemasukan";
-                                    $result_total_pemasukan = mysqli_query($koneksi, $query_total_pemasukan);
-                                    $total_pemasukan = mysqli_fetch_assoc($result_total_pemasukan)['total_pemasukan'];
+                                        // Lakukan query
+                                        $result = $koneksi->query($sql);
 
-                                    // Query untuk mengambil total pengeluaran
-                                    $query_total_pengeluaran = "SELECT SUM(jumlah) AS total_pengeluaran FROM pengeluaran";
-                                    $result_total_pengeluaran = mysqli_query($koneksi, $query_total_pengeluaran);
-                                    $total_pengeluaran = mysqli_fetch_assoc($result_total_pengeluaran)['total_pengeluaran'];
-
-                                    // Hitung selisih (pemasukan dikurangkan pengeluaran)
-                                    $selisih = $total_pemasukan - $total_pengeluaran;
-
-                                    // Tampilkan total dalam tabel
-                                    echo '<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">';
-                                    echo '<thead>';
-                                    echo '<tr>';
-                                    echo '<th>No</th>';
-                                    echo '<th>Deskripsi</th>';
-                                    echo '<th>Jumlah</th>';
-                                    echo '</tr>';
-                                    echo '</thead>';
-                                    echo '<tbody>';
-                                    echo '<tr>';
-                                    echo '<td>1</td>';
-                                    echo '<td>Total Pemasukan</td>';
-                                    echo '<td>' . $total_pemasukan . '</td>';
-                                    echo '</tr>';
-                                    echo '<tr>';
-                                    echo '<td>2</td>';
-                                    echo '<td>Total Pengeluaran</td>';
-                                    echo '<td>' . $total_pengeluaran . '</td>';
-                                    echo '</tr>';
-                                    echo '<tr>';
-
-                                    echo '<td colspan="2" style="text-align:center;">Selisih Laba Rugi</td>';
-                                    echo '<td>' . $selisih . '</td>';
-                                    echo '</tr>';
-                                    echo '</tbody>';
-                                    echo '</table>';
-
-                                    // Tutup koneksi (jika tidak menggunakan persistent connection)
-                                    mysqli_close($koneksi);
-                                    ?>
-                                </div>
-
+                                        // Periksa apakah query berhasil atau tidak
+                                        if ($result === FALSE) {
+                                            echo "Error: " . $koneksi->error;
+                                        } else {
+                                            // Jika hasil query tidak kosong
+                                            if ($result->num_rows > 0) {
+                                                $no = 1;
+                                                // Output data dari setiap baris
+                                                while ($row = $result->fetch_assoc()) {
+                                                    echo "<tr>
+                                                    <td>" . $no . "</td>
+                                                    <td>" . date('d F Y', strtotime($row['tanggal'])) . "</td>
+                                                    <td>" . $row['sumber'] . "</td>
+                                                    <td>" . $row['jumlah'] . "</td>
+                                                    <td>";
+                                                    // Tampilkan "Keuangan" jika nilai status adalah 2, dan "Operasional" jika nilai status adalah 1
+                                                    if ($row['status'] == 2) {
+                                                        echo "Keuangan";
+                                                    } elseif ($row['status'] == 1) {
+                                                        echo "Operasional";
+                                                    } else {
+                                                        echo "Tidak valid";
+                                                    }
+                                                    echo "</td>
+                                                </tr>";
+                                                    $no++;
+                                                }
+                                            } else {
+                                                echo "<tr><td colspan='5'>Tidak ada data</td></tr>";
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
+
+
+                <!-- /.container-fluid -->
             </div>
+            <!-- End of Main Content -->
+
 
 
         </div>
-        <!-- /.container-fluid -->
-
-    </div>
-    <!-- End of Main Content -->
-
-    <?php require 'footer.php' ?>
-
-    </div>
-    <!-- End of Content Wrapper -->
+        <!-- End of Content Wrapper -->
 
     </div>
     <!-- End of Page Wrapper -->
@@ -179,6 +171,7 @@ WHERE tgl_pengeluaran = CURDATE() - INTERVAL 7 DAY");
     <!-- Logout Modal-->
     <?php require 'logout-modal.php'; ?>
 
+    <!-- Bootstrap core JavaScript-->
 
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -323,3 +316,8 @@ WHERE tgl_pengeluaran = CURDATE() - INTERVAL 7 DAY");
 </body>
 
 </html>
+
+<?php
+// Tutup koneksi
+$koneksi->close();
+?>
