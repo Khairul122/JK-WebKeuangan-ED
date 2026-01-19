@@ -43,6 +43,30 @@ require 'cek-sesi.php';
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Laba Rugi</h6>
                 </div>
+
+                <!-- Filter Periode -->
+                <div class="card-body">
+                    <form method="GET" action="">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label>Tanggal Awal</label>
+                                <input type="date" name="tanggal_awal" class="form-control" value="<?php echo isset($_GET['tanggal_awal']) ? $_GET['tanggal_awal'] : date('Y-m-01'); ?>">
+                            </div>
+                            <div class="col-md-3">
+                                <label>Tanggal Akhir</label>
+                                <input type="date" name="tanggal_akhir" class="form-control" value="<?php echo isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : date('Y-m-t'); ?>">
+                            </div>
+                            <div class="col-md-2">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                            </div>
+                            <div class="col-md-2">
+                                <label>&nbsp;</label>
+                                <a href="laba-rugi-lihat.php" class="btn btn-secondary btn-block">Reset</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -59,8 +83,15 @@ require 'cek-sesi.php';
                                 // Sisipkan file koneksi.php yang berisi koneksi ke database
                                 include('koneksi.php');
 
+                                // Filter tanggal dan user
+                                $tanggal_awal = isset($_GET['tanggal_awal']) ? $_GET['tanggal_awal'] : date('Y-m-01');
+                                $tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : date('Y-m-t');
+                                $id_user = $_SESSION['id'];
+
                                 // Query untuk menampilkan data dari tabel laba_rugi yang memiliki status 1
-                                $query_pendapatan = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 1 AND id_user = 1"; // Sesuaikan dengan kondisi Anda
+                                $query_pendapatan = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 1
+                                                    AND tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'
+                                                    AND id_user = '$id_user'";
 
                                 // Jalankan query pendapatan
                                 $result_pendapatan = mysqli_query($koneksi, $query_pendapatan);
@@ -74,7 +105,7 @@ require 'cek-sesi.php';
                                     while ($row = mysqli_fetch_assoc($result_pendapatan)) {
                                         echo "<tr>";
                                         echo "<td>" . $row['sumber'] . "</td>";
-                                        echo "<td>" . $row['jumlah'] . "</td>";
+                                        echo "<td style='text-align:right'>" . number_format($row['jumlah'], 0, ',', '.') . "</td>";
                                         echo "</tr>";
 
                                         // Tambahkan nilai jumlah pendapatan ke dalam total_pendapatan
@@ -85,13 +116,15 @@ require 'cek-sesi.php';
                                 }
 
                                 // Tampilkan total pendapatan dari penjualan
-                                echo "<tr><td colspan='1'><strong>Total Pendapatan dari Penjualan</strong></td><td><strong>" . $total_pendapatan . "</strong></td></tr>";
+                                echo "<tr><td colspan='1'><strong>Total Pendapatan dari Penjualan</strong></td><td style='text-align:right'><strong>" . number_format($total_pendapatan, 0, ',', '.') . "</strong></td></tr>";
 
                                 // Tambahkan label "Harga Pokok Penjualan"
                                 echo "<tr><td colspan='2'>Harga Pokok Penjualan</td></tr>";
 
                                 // Query untuk menampilkan data dari tabel laba_rugi yang memiliki status 2
-                                $query_harga_pokok = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 2 AND id_user = 1"; // Sesuaikan dengan kondisi Anda
+                                $query_harga_pokok = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 2
+                                                      AND tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'
+                                                      AND id_user = '$id_user'";
 
                                 // Jalankan query harga pokok
                                 $result_harga_pokok = mysqli_query($koneksi, $query_harga_pokok);
@@ -105,7 +138,7 @@ require 'cek-sesi.php';
                                     while ($row = mysqli_fetch_assoc($result_harga_pokok)) {
                                         echo "<tr>";
                                         echo "<td>" . $row['sumber'] . "</td>";
-                                        echo "<td>" . $row['jumlah'] . "</td>";
+                                        echo "<td style='text-align:right'>" . number_format($row['jumlah'], 0, ',', '.') . "</td>";
                                         echo "</tr>";
 
                                         // Tambahkan nilai jumlah harga pokok ke dalam total_harga_pokok
@@ -116,19 +149,21 @@ require 'cek-sesi.php';
                                 }
 
                                 // Tampilkan total harga pokok penjualan
-                                echo "<tr><td colspan='1'><strong>Total Harga Pokok Penjualan</strong></td><td><strong>" . $total_harga_pokok . "</strong></td></tr>";
+                                echo "<tr><td colspan='1'><strong>Total Harga Pokok Penjualan</strong></td><td style='text-align:right'><strong>" . number_format($total_harga_pokok, 0, ',', '.') . "</strong></td></tr>";
 
                                 // Hitung laba kotor (Total Pendapatan - Total Harga Pokok)
                                 $laba_kotor = $total_pendapatan - $total_harga_pokok;
 
                                 // Tampilkan laba kotor
-                                echo "<tr><td colspan='1'><strong>Laba Kotor</strong></td><td><strong>" . $laba_kotor . "</strong></td></tr>";
+                                echo "<tr><td colspan='1'><strong>Laba Kotor</strong></td><td style='text-align:right'><strong>" . number_format($laba_kotor, 0, ',', '.') . "</strong></td></tr>";
 
                                 // Tambahkan label "Biaya Operasional"
                                 echo "<tr><td colspan='2'>Biaya Operasional</td></tr>";
 
                                 // Query untuk menampilkan data dari tabel laba_rugi yang memiliki status 3
-                                $query_biaya_operasional = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 3 AND id_user = 1"; // Sesuaikan dengan kondisi Anda
+                                $query_biaya_operasional = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 3
+                                                           AND tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'
+                                                           AND id_user = '$id_user'";
 
                                 // Jalankan query biaya operasional
                                 $result_biaya_operasional = mysqli_query($koneksi, $query_biaya_operasional);
@@ -142,7 +177,7 @@ require 'cek-sesi.php';
                                     while ($row = mysqli_fetch_assoc($result_biaya_operasional)) {
                                         echo "<tr>";
                                         echo "<td>" . $row['sumber'] . "</td>";
-                                        echo "<td>" . $row['jumlah'] . "</td>";
+                                        echo "<td style='text-align:right'>" . number_format($row['jumlah'], 0, ',', '.') . "</td>";
                                         echo "</tr>";
 
                                         // Tambahkan nilai jumlah biaya operasional ke dalam total_biaya_operasional
@@ -153,12 +188,20 @@ require 'cek-sesi.php';
                                 }
 
                                 // Tampilkan total biaya operasional
-                                echo "<tr><td colspan='1'><strong>Total Biaya Operasional</strong></td><td><strong>" . $total_biaya_operasional . "</strong></td></tr>";
+                                echo "<tr><td colspan='1'><strong>Total Biaya Operasional</strong></td><td style='text-align:right'><strong>" . number_format($total_biaya_operasional, 0, ',', '.') . "</strong></td></tr>";
 
-                                // Tambahkan label "Pendapatan Bersih" dan hitung nilai pendapatan bersih (Laba Kotor - Total Biaya Operasional)
-                                $pendapatan_bersih = $laba_kotor - $total_biaya_operasional;
-                                echo "<tr><td colspan='1'><strong>Pendapatan Bersih</strong></td><td><strong>" . $pendapatan_bersih . "</strong></td></tr>";
-                                echo "<tr><td colspan='1'><strong>Total Pendapatan Komprehesif Periode Ini</strong></td><td><strong>" . $pendapatan_bersih . "</strong></td></tr>";
+                                // Hitung pendapatan bersih sebelum pajak (Laba Kotor - Total Biaya Operasional)
+                                $pendapatan_bersih_sebelum_pajak = $laba_kotor - $total_biaya_operasional;
+                                echo "<tr><td colspan='1'><strong>Laba Bersih Sebelum Pajak</strong></td><td style='text-align:right'><strong>" . number_format($pendapatan_bersih_sebelum_pajak, 0, ',', '.') . "</strong></td></tr>";
+
+                                // Hitung pajak penghasilan 25%
+                                $pajak_penghasilan = $pendapatan_bersih_sebelum_pajak * 0.25;
+                                echo "<tr><td colspan='1'><strong>Beban Pajak Penghasilan (25%)</strong></td><td style='text-align:right'><strong>(" . number_format($pajak_penghasilan, 0, ',', '.') . ")</strong></td></tr>";
+
+                                // Hitung pendapatan bersih setelah pajak
+                                $pendapatan_bersih = $pendapatan_bersih_sebelum_pajak - $pajak_penghasilan;
+                                echo "<tr><td colspan='1'><strong>Laba Bersih Setelah Pajak</strong></td><td style='text-align:right'><strong>" . number_format($pendapatan_bersih, 0, ',', '.') . "</strong></td></tr>";
+                                echo "<tr><td colspan='1'><strong>Total Pendapatan Komprehensif Periode Ini</strong></td><td style='text-align:right'><strong>" . number_format($pendapatan_bersih, 0, ',', '.') . "</strong></td></tr>";
 
                                 // Tutup koneksi ke database
                                 mysqli_close($koneksi);

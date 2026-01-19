@@ -8,7 +8,7 @@
           <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
               <div class="sidebar-brand-icon rotate-n-15">
               </div>
-              <div class="sidebar-brand-text mx-3">Alfara Motor</div>
+              <div class="sidebar-brand-text mx-3">CV Bina Padi Sabatang </div>
           </a>
 
           <!-- Divider -->

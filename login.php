@@ -34,7 +34,7 @@
 
           <div class="p-5">
             <div class="text-center">
-              <h1 class="h4 text-gray-900 mb-4">Alfara Motor</h1>
+              <h1 class="h4 text-gray-900 mb-4">CV Bina Padi Sabatang </h1>
             </div>
             <form class="user" action="proses-login.php" method="post">
               <div class="form-group">

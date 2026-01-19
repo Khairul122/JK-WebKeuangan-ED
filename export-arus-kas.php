@@ -2,6 +2,15 @@
 // Include the mpdf library
 require_once 'vendor/vendor/autoload.php'; // Sesuaikan path sesuai struktur proyek Anda
 
+// Start session
+session_start();
+
+// Get user ID
+$id_user = $_SESSION['id'];
+
+// Get pimpinan name from session
+$nama_pimpinan = isset($_SESSION['pimpinan']) ? $_SESSION['pimpinan'] : 'Pimpinan';
+
 // Create an instance of the mPDF class
 $mpdf = new \Mpdf\Mpdf();
 
@@ -49,9 +58,9 @@ ob_start();
     }
 </style>
 
-<h1>Alfara Motor</h1>
-<h4>Jl. Sutan Syahrir No.215, Mata Air</h4>
-<h4>Kec. Padang Selatan., Kota Padang, Sumatera Barat 25121</h4>
+<h1>CV BINA PADI SABATANG</h1>
+<h4>Jl. Pulai, Batang Kabung Ganting</h4>
+<h4>Kec. Koto Tangah, Kota Padang, Sumatera Barat 25586</h4>
 <hr class="custom-line">
 
 <!-- Tabel data -->
@@ -128,12 +137,12 @@ ob_start();
 <div style="margin-top: 20px; text-align: left;">
     <div style="float: right;">
         Padang, <?php echo date('j F Y'); ?><br>
-        Pimpinan Toko Alfara Motor
+        <?php echo htmlspecialchars($nama_pimpinan); ?>
         <br>
         <br>
         <br>
         <br>
-        (Pimpinan)
+        (<?php echo htmlspecialchars($nama_pimpinan); ?>)
     </div>
 </div>
 
@@ -144,8 +153,8 @@ $html = ob_get_clean();
 // Add the HTML content to the PDF
 $mpdf->WriteHTML($html);
 
-// Set PDF headers
-$mpdf->Output('Laporan Arus Kas.pdf', 'D'); // 'D' option will force a download
+// Set PDF headers - Preview di browser dulu (I = Inline)
+$mpdf->Output('Laporan_Arus_Kas.pdf', 'I');
 
 // Exit to prevent any additional output
 exit;

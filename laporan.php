@@ -44,6 +44,31 @@ require 'cek-sesi.php';
                     <h6 class="m-0 font-weight-bold text-primary">Laporan</h6>
                 </div>
                 <div class="card-body">
+
+                    <!-- Form Input Nama Pimpinan -->
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-light">
+                            <h6 class="m-0 font-weight-bold text-primary">Pengaturan Nama Pimpinan</h6>
+                        </div>
+                        <div class="card-body">
+                            <form action="save-pimpinan.php" method="POST">
+                                <div class="form-group">
+                                    <label for="pimpinan">Nama Pimpinan:</label>
+                                    <input type="text" class="form-control" id="pimpinan" name="pimpinan"
+                                           placeholder="Masukkan nama pimpinan (misal: Budi Santoso)"
+                                           value="<?php echo isset($_SESSION['pimpinan']) ? htmlspecialchars($_SESSION['pimpinan']) : 'Pimpinan'; ?>"
+                                           required>
+                                    <small class="form-text text-muted">
+                                        Nama pimpinan akan ditampilkan di bagian tanda tangan pada semua laporan PDF.
+                                    </small>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-save"></i> Simpan Nama Pimpinan
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- End Form Input Nama Pimpinan -->
                     <div class="table-responsive">
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>

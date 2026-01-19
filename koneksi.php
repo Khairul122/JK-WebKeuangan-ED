@@ -3,6 +3,6 @@
 $host = 'localhost';
 $nama = 'root';
 $pass = '';
-$db = 'keuangan2';
+$db = 'keuangan';
 
 $koneksi = mysqli_connect($host, $nama, $pass, $db);

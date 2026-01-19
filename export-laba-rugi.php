@@ -2,6 +2,21 @@
 // Include the mpdf library
 require_once 'vendor/vendor/autoload.php'; // Sesuaikan path sesuai struktur proyek Anda
 
+// Start session
+session_start();
+
+// Get filter parameters
+$tanggal_awal = isset($_GET['tanggal_awal']) ? $_GET['tanggal_awal'] : date('Y-m-01');
+$tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : date('Y-m-t');
+$id_user = $_SESSION['id'];
+
+// Format tanggal untuk tampilan
+$tgl_awal_fmt = date('d F Y', strtotime($tanggal_awal));
+$tgl_akhir_fmt = date('d F Y', strtotime($tanggal_akhir));
+
+// Get pimpinan name from session
+$nama_pimpinan = isset($_SESSION['pimpinan']) ? $_SESSION['pimpinan'] : 'Pimpinan';
+
 // Create an instance of the mPDF class
 $mpdf = new \Mpdf\Mpdf();
 
@@ -49,10 +64,13 @@ ob_start();
     }
 </style>
 
-<h1>Alfara Motor</h1>
-<h4>Jl. Sutan Syahrir No.215, Mata Air</h4>
-<h4>Kec. Padang Selatan., Kota Padang, Sumatera Barat 25121</h4>
+<h1>CV BINA PADI SABATANG</h1>
+<h4>Jl. Pulai, Batang Kabung Ganting</h4>
+<h4>Kec. Koto Tangah, Kota Padang, Sumatera Barat 25586</h4>
 <hr class="custom-line">
+
+<h4 style="text-align: center; margin-bottom: 5px;">LAPORAN LABA RUGI</h4>
+<h4 style="text-align: center; margin-top: 0px; margin-bottom: 20px;">Periode: <?php echo $tgl_awal_fmt; ?> s/d <?php echo $tgl_akhir_fmt; ?></h4>
 
 <!-- Tabel data -->
 <table>
@@ -70,7 +88,9 @@ ob_start();
         include('koneksi.php');
 
         // Query untuk menampilkan data dari tabel laba_rugi yang memiliki status 1
-        $query_pendapatan = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 1 AND id_user = 1"; // Sesuaikan dengan kondisi Anda
+        $query_pendapatan = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 1
+                            AND tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'
+                            AND id_user = '$id_user'";
 
         // Jalankan query pendapatan
         $result_pendapatan = mysqli_query($koneksi, $query_pendapatan);
@@ -84,7 +104,7 @@ ob_start();
             while ($row = mysqli_fetch_assoc($result_pendapatan)) {
                 echo "<tr>";
                 echo "<td>" . $row['sumber'] . "</td>";
-                echo "<td>" . $row['jumlah'] . "</td>";
+                echo "<td style='text-align:right'>" . number_format($row['jumlah'], 0, ',', '.') . "</td>";
                 echo "</tr>";
 
                 // Tambahkan nilai jumlah pendapatan ke dalam total_pendapatan
@@ -95,13 +115,15 @@ ob_start();
         }
 
         // Tampilkan total pendapatan dari penjualan
-        echo "<tr><td colspan='1'><strong>Total Pendapatan dari Penjualan</strong></td><td><strong>" . $total_pendapatan . "</strong></td></tr>";
+        echo "<tr><td colspan='1'><strong>Total Pendapatan dari Penjualan</strong></td><td style='text-align:right'><strong>" . number_format($total_pendapatan, 0, ',', '.') . "</strong></td></tr>";
 
         // Tambahkan label "Harga Pokok Penjualan"
         echo "<tr><td colspan='2'>Harga Pokok Penjualan</td></tr>";
 
         // Query untuk menampilkan data dari tabel laba_rugi yang memiliki status 2
-        $query_harga_pokok = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 2 AND id_user = 1"; // Sesuaikan dengan kondisi Anda
+        $query_harga_pokok = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 2
+                              AND tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'
+                              AND id_user = '$id_user'";
 
         // Jalankan query harga pokok
         $result_harga_pokok = mysqli_query($koneksi, $query_harga_pokok);
@@ -115,7 +137,7 @@ ob_start();
             while ($row = mysqli_fetch_assoc($result_harga_pokok)) {
                 echo "<tr>";
                 echo "<td>" . $row['sumber'] . "</td>";
-                echo "<td>" . $row['jumlah'] . "</td>";
+                echo "<td style='text-align:right'>" . number_format($row['jumlah'], 0, ',', '.') . "</td>";
                 echo "</tr>";
 
                 // Tambahkan nilai jumlah harga pokok ke dalam total_harga_pokok
@@ -126,19 +148,21 @@ ob_start();
         }
 
         // Tampilkan total harga pokok penjualan
-        echo "<tr><td colspan='1'><strong>Total Harga Pokok Penjualan</strong></td><td><strong>" . $total_harga_pokok . "</strong></td></tr>";
+        echo "<tr><td colspan='1'><strong>Total Harga Pokok Penjualan</strong></td><td style='text-align:right'><strong>" . number_format($total_harga_pokok, 0, ',', '.') . "</strong></td></tr>";
 
         // Hitung laba kotor (Total Pendapatan - Total Harga Pokok)
         $laba_kotor = $total_pendapatan - $total_harga_pokok;
 
         // Tampilkan laba kotor
-        echo "<tr><td colspan='1'><strong>Laba Kotor</strong></td><td><strong>" . $laba_kotor . "</strong></td></tr>";
+        echo "<tr><td colspan='1'><strong>Laba Kotor</strong></td><td style='text-align:right'><strong>" . number_format($laba_kotor, 0, ',', '.') . "</strong></td></tr>";
 
         // Tambahkan label "Biaya Operasional"
         echo "<tr><td colspan='2'>Biaya Operasional</td></tr>";
 
         // Query untuk menampilkan data dari tabel laba_rugi yang memiliki status 3
-        $query_biaya_operasional = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 3 AND id_user = 1"; // Sesuaikan dengan kondisi Anda
+        $query_biaya_operasional = "SELECT sumber, jumlah FROM laba_rugi WHERE status = 3
+                                   AND tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'
+                                   AND id_user = '$id_user'";
 
         // Jalankan query biaya operasional
         $result_biaya_operasional = mysqli_query($koneksi, $query_biaya_operasional);
@@ -152,7 +176,7 @@ ob_start();
             while ($row = mysqli_fetch_assoc($result_biaya_operasional)) {
                 echo "<tr>";
                 echo "<td>" . $row['sumber'] . "</td>";
-                echo "<td>" . $row['jumlah'] . "</td>";
+                echo "<td style='text-align:right'>" . number_format($row['jumlah'], 0, ',', '.') . "</td>";
                 echo "</tr>";
 
                 // Tambahkan nilai jumlah biaya operasional ke dalam total_biaya_operasional
@@ -163,12 +187,20 @@ ob_start();
         }
 
         // Tampilkan total biaya operasional
-        echo "<tr><td colspan='1'><strong>Total Biaya Operasional</strong></td><td><strong>" . $total_biaya_operasional . "</strong></td></tr>";
+        echo "<tr><td colspan='1'><strong>Total Biaya Operasional</strong></td><td style='text-align:right'><strong>" . number_format($total_biaya_operasional, 0, ',', '.') . "</strong></td></tr>";
 
-        // Tambahkan label "Pendapatan Bersih" dan hitung nilai pendapatan bersih (Laba Kotor - Total Biaya Operasional)
-        $pendapatan_bersih = $laba_kotor - $total_biaya_operasional;
-        echo "<tr><td colspan='1'><strong>Pendapatan Bersih</strong></td><td><strong>" . $pendapatan_bersih . "</strong></td></tr>";
-        echo "<tr><td colspan='1'><strong>Total Pendapatan Komprehesif Periode Ini</strong></td><td><strong>" . $pendapatan_bersih . "</strong></td></tr>";
+        // Hitung pendapatan bersih sebelum pajak (Laba Kotor - Total Biaya Operasional)
+        $pendapatan_bersih_sebelum_pajak = $laba_kotor - $total_biaya_operasional;
+        echo "<tr><td colspan='1'><strong>Laba Bersih Sebelum Pajak</strong></td><td style='text-align:right'><strong>" . number_format($pendapatan_bersih_sebelum_pajak, 0, ',', '.') . "</strong></td></tr>";
+
+        // Hitung pajak penghasilan 25% (hanya jika laba)
+        $pajak_penghasilan = ($pendapatan_bersih_sebelum_pajak > 0) ? $pendapatan_bersih_sebelum_pajak * 0.25 : 0;
+        echo "<tr><td colspan='1'><strong>Beban Pajak Penghasilan (25%)</strong></td><td style='text-align:right'><strong>(" . number_format($pajak_penghasilan, 0, ',', '.') . ")</strong></td></tr>";
+
+        // Hitung pendapatan bersih setelah pajak
+        $pendapatan_bersih = $pendapatan_bersih_sebelum_pajak - $pajak_penghasilan;
+        echo "<tr><td colspan='1'><strong>Laba Bersih Setelah Pajak</strong></td><td style='text-align:right'><strong>" . number_format($pendapatan_bersih, 0, ',', '.') . "</strong></td></tr>";
+        echo "<tr><td colspan='1'><strong>Total Pendapatan Komprehensif Periode Ini</strong></td><td style='text-align:right'><strong>" . number_format($pendapatan_bersih, 0, ',', '.') . "</strong></td></tr>";
 
         // Tutup koneksi ke database
         mysqli_close($koneksi);
@@ -179,12 +211,12 @@ ob_start();
 <div style="margin-top: 20px; text-align: left;">
     <div style="float: right;">
         Padang, <?php echo date('j F Y'); ?><br>
-        Pimpinan Toko Alfara Motor
+        <?php echo htmlspecialchars($nama_pimpinan); ?>
         <br>
         <br>
         <br>
         <br>
-        (Pimpinan)
+        (<?php echo htmlspecialchars($nama_pimpinan); ?>)
     </div>
 </div>
 
@@ -192,7 +224,7 @@ ob_start();
 
 <!-- <div class="right-info">
     <p style="padding-right:55px;">Padang, <?php echo date('d F Y'); ?></p>
-    <p>Pimpinan Toko Alfara Motor</p>
+    <p>Pimpinan CV Bina Padi Sabatang  </p>
     <br>
     <p style="padding-right:125px;">Pimpinan</p>
 </div> -->
@@ -205,8 +237,8 @@ $html = ob_get_clean();
 // Add the HTML content to the PDF
 $mpdf->WriteHTML($html);
 
-// Set PDF headers
-$mpdf->Output('Laporan Laba Rugi.pdf', 'D'); // 'D' option will force a download
+// Set PDF headers - Preview di browser dulu (I = Inline)
+$mpdf->Output('Laporan_Laba_Rugi.pdf', 'I');
 
 // Exit to prevent any additional output
 exit;
