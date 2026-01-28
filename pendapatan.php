@@ -78,104 +78,86 @@ require 'cek-sesi.php';
                         <td>Rp. <?= number_format($data['jumlah'], 2, ',', '.'); ?></td>
                         <td><?= $data['sumber'] ?></td>
                         <td>
-                          <!-- Button untuk modal -->
-                          <a href="#" type="button" class=" fa fa-edit btn btn-primary btn-md" data-toggle="modal" data-target="#myModal<?php echo $data['id_pemasukan']; ?>"></a>
+                          <!-- Button untuk modal edit -->
+                          <a href="#" type="button" class="fa fa-edit btn btn-primary btn-md" data-toggle="modal" data-target="#myModal<?php echo $data['id_pemasukan']; ?>"></a>
                         </td>
                       </tr>
-                      <!-- Modal Edit Mahasiswa-->
-                      <div class="modal fade" id="myModal<?php echo $data['id_pemasukan']; ?>" role="dialog">
-                        <div class="modal-dialog">
-
-                          <!-- Modal content-->
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h4 class="modal-title">Ubah Data Pemasukan</h4>
-                              <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                              <form role="form" action="proses-edit-pemasukan.php" method="get">
-
-                                <?php
-                                $id = $data['id_pemasukan'];
-                                $query_edit = mysqli_query($koneksi, "SELECT * FROM pemasukan WHERE id_pemasukan='$id'");
-                                //$result = mysqli_query($conn, $query);
-                                while ($row = mysqli_fetch_array($query_edit)) {
-                                ?>
-
-                                  <input type="hidden" name="id_pemasukan" value="<?php echo $row['id_pemasukan']; ?>">
-                                  <div class="form-group">
-                                    <label>Tanggal</label>
-                                    <input type="date" name="tgl_pemasukan" class="form-control" value="<?php echo $row['tgl_pemasukan']; ?>">
-                                  </div>
-
-                                  <div class="form-group">
-                                    <label>Jumlah</label>
-                                    <input type="number" name="jumlah" class="form-control" value="<?php echo $row['jumlah']; ?>">
-                                  </div>
-
-                                  <div class="form-group">
-                                    <label>Sumber</label>
-                                    <input type="text" name="sumber" class="form-control" value="<?php echo $row['sumber']; ?>">
-                                  </div>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="submit" class="btn btn-success">Ubah</button>
-                              <a href="hapus-pemasukan.php?id_pemasukan=<?= $row['id_pemasukan']; ?>" Onclick="confirm('Anda Yakin Ingin Menghapus?')" class="btn btn-danger">Hapus</a>
-                              <button type="button" class="btn btn-default" data-dismiss="modal">Keluar</button>
-                            </div>
-                          <?php
-                                }
-                                //mysql_close($host);
-                          ?>
-
-                          </form>
-                          </div>
-                        </div>
-
-                      </div>
-              </div>
-
-
-
-              <!-- Modal -->
-              <div id="myModalTambah" class="modal fade" role="dialog">
-                <div class="modal-dialog">
-
-                  <!-- konten modal-->
-                  <div class="modal-content">
-                    <!-- heading modal -->
-                    <div class="modal-header">
-                      <h4 class="modal-title">Tambah Pendapatan</h4>
-                      <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <!-- body modal -->
-                    <form action="tambah-pendapatan.php" method="get">
-                      <div class="modal-body">
-                        Tanggal :
-                        <input type="date" class="form-control" name="tgl_pemasukan">
-                        Jumlah :
-                        <input type="number" class="form-control" name="jumlah">
-                        Sumber :
-                        <input type="text" class="form-control" name="sumber">
-                      </div>
-                      <!-- footer modal -->
-                      <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Tambah</button>
-                    </form>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Keluar</button>
-                  </div>
-                </div>
-
+                    <?php } ?>
+                  </tbody>
+                </table>
               </div>
             </div>
+          </div>
+        </div>
 
+        <!-- Modal Edit Per Item (Di dalam loop) -->
+        <?php
+        $query_edit = mysqli_query($koneksi, "SELECT * FROM pemasukan");
+        while ($row = mysqli_fetch_array($query_edit)) {
+        ?>
+          <div class="modal fade" id="myModal<?php echo $row['id_pemasukan']; ?>" role="dialog">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Ubah Data Pemasukan</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form role="form" action="proses-edit-pemasukan.php" method="get">
+                  <div class="modal-body">
+                    <input type="hidden" name="id_pemasukan" value="<?php echo $row['id_pemasukan']; ?>">
+                    <div class="form-group">
+                      <label>Tanggal</label>
+                      <input type="date" name="tgl_pemasukan" class="form-control" value="<?php echo $row['tgl_pemasukan']; ?>" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Jumlah</label>
+                      <input type="number" name="jumlah" class="form-control" value="<?php echo $row['jumlah']; ?>" required min="1">
+                    </div>
+                    <div class="form-group">
+                      <label>Sumber</label>
+                      <input type="text" name="sumber" class="form-control" value="<?php echo $row['sumber']; ?>" required>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Ubah</button>
+                    <a href="hapus-pemasukan.php?id_pemasukan=<?= $row['id_pemasukan']; ?>" onclick="return confirm('Anda Yakin Ingin Menghapus?')" class="btn btn-danger">Hapus</a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Keluar</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        <?php } ?>
 
-
-          <?php
-                    }
-          ?>
-          </tbody>
-          </table>
+        <!-- Modal Tambah (DI LUAR loop - SELALU muncul) -->
+        <div id="myModalTambah" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Tambah Pendapatan</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <form action="tambah-pendapatan.php" method="get">
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label>Tanggal</label>
+                    <input type="date" class="form-control" name="tgl_pemasukan" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Jumlah</label>
+                    <input type="number" class="form-control" name="jumlah" required min="1">
+                  </div>
+                  <div class="form-group">
+                    <label>Sumber</label>
+                    <input type="text" class="form-control" name="sumber" required>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-success">Tambah</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Keluar</button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>

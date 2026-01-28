@@ -32,21 +32,26 @@ require 'cek-sesi.php';
   $karyawan = mysqli_query($koneksi, "SELECT * FROM karyawan");
   $karyawan = mysqli_num_rows($karyawan);
 
-  $pengeluaran_hari_ini = mysqli_query($koneksi, "SELECT jumlah FROM pengeluaran where tgl_pengeluaran = CURDATE()");
-  $pengeluaran_hari_ini = mysqli_fetch_array($pengeluaran_hari_ini);
+  $pengeluaran_hari_ini_query = mysqli_query($koneksi, "SELECT jumlah FROM pengeluaran where tgl_pengeluaran = CURDATE()");
+  $pengeluaran_hari_ini = mysqli_fetch_array($pengeluaran_hari_ini_query);
+  $pengeluaran_hari_ini = $pengeluaran_hari_ini ? $pengeluaran_hari_ini['jumlah'] : 0;
 
-  $pemasukan_hari_ini = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan where tgl_pemasukan = CURDATE()");
-  $pemasukan_hari_ini = mysqli_fetch_array($pemasukan_hari_ini);
+  $pemasukan_hari_ini_query = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan where tgl_pemasukan = CURDATE()");
+  $pemasukan_hari_ini = mysqli_fetch_array($pemasukan_hari_ini_query);
+  $pemasukan_hari_ini = $pemasukan_hari_ini ? $pemasukan_hari_ini['jumlah'] : 0;
 
 
 
+  // Inisialisasi array sebelum loop
+  $arraymasuk = array();
   $pemasukan = mysqli_query($koneksi, "SELECT * FROM pemasukan");
   while ($masuk = mysqli_fetch_array($pemasukan)) {
     $arraymasuk[] = $masuk['jumlah'];
   }
   $jumlahmasuk = array_sum($arraymasuk);
 
-
+  // Inisialisasi array sebelum loop
+  $arraykeluar = array();
   $pengeluaran = mysqli_query($koneksi, "SELECT * FROM pengeluaran");
   while ($keluar = mysqli_fetch_array($pengeluaran)) {
     $arraykeluar[] = $keluar['jumlah'];
@@ -58,40 +63,37 @@ require 'cek-sesi.php';
 
   //untuk data chart area
 
+  $sekarang_query = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan WHERE tgl_pemasukan = CURDATE()");
+  $sekarang = mysqli_fetch_array($sekarang_query);
+  $sekarang = $sekarang ? $sekarang['jumlah'] : 0;
 
+  $satuhari_query = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan WHERE tgl_pemasukan = CURDATE() - INTERVAL 1 DAY");
+  $satuhari = mysqli_fetch_array($satuhari_query);
+  $satuhari = $satuhari ? $satuhari['jumlah'] : 0;
 
-  $sekarang = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan
-WHERE tgl_pemasukan = CURDATE()");
-  $sekarang = mysqli_fetch_array($sekarang);
+  $duahari_query = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan WHERE tgl_pemasukan = CURDATE() - INTERVAL 2 DAY");
+  $duahari = mysqli_fetch_array($duahari_query);
+  $duahari = $duahari ? $duahari['jumlah'] : 0;
 
-  $satuhari = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan
-WHERE tgl_pemasukan = CURDATE() - INTERVAL 1 DAY");
-  $satuhari = mysqli_fetch_array($satuhari);
+  $tigahari_query = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan WHERE tgl_pemasukan = CURDATE() - INTERVAL 3 DAY");
+  $tigahari = mysqli_fetch_array($tigahari_query);
+  $tigahari = $tigahari ? $tigahari['jumlah'] : 0;
 
+  $empathari_query = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan WHERE tgl_pemasukan = CURDATE() - INTERVAL 4 DAY");
+  $empathari = mysqli_fetch_array($empathari_query);
+  $empathari = $empathari ? $empathari['jumlah'] : 0;
 
-  $duahari = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan
-WHERE tgl_pemasukan = CURDATE() - INTERVAL 2 DAY");
-  $duahari = mysqli_fetch_array($duahari);
+  $limahari_query = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan WHERE tgl_pemasukan = CURDATE() - INTERVAL 5 DAY");
+  $limahari = mysqli_fetch_array($limahari_query);
+  $limahari = $limahari ? $limahari['jumlah'] : 0;
 
-  $tigahari = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan
-WHERE tgl_pemasukan = CURDATE() - INTERVAL 3 DAY");
-  $tigahari = mysqli_fetch_array($tigahari);
+  $enamhari_query = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan WHERE tgl_pemasukan = CURDATE() - INTERVAL 6 DAY");
+  $enamhari = mysqli_fetch_array($enamhari_query);
+  $enamhari = $enamhari ? $enamhari['jumlah'] : 0;
 
-  $empathari = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan
-WHERE tgl_pemasukan = CURDATE() - INTERVAL 4 DAY");
-  $empathari = mysqli_fetch_array($empathari);
-
-  $limahari = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan
-WHERE tgl_pemasukan = CURDATE() - INTERVAL 5 DAY");
-  $limahari = mysqli_fetch_array($limahari);
-
-  $enamhari = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan
-WHERE tgl_pemasukan = CURDATE() - INTERVAL 6 DAY");
-  $enamhari = mysqli_fetch_array($enamhari);
-
-  $tujuhhari = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan
-WHERE tgl_pemasukan = CURDATE() - INTERVAL 7 DAY");
-  $tujuhhari = mysqli_fetch_array($tujuhhari);
+  $tujuhhari_query = mysqli_query($koneksi, "SELECT jumlah FROM pemasukan WHERE tgl_pemasukan = CURDATE() - INTERVAL 7 DAY");
+  $tujuhhari = mysqli_fetch_array($tujuhhari_query);
+  $tujuhhari = $tujuhhari ? $tujuhhari['jumlah'] : 0;
   ?>
   <!-- Main Content -->
   <div id="content">
@@ -132,9 +134,9 @@ WHERE tgl_pemasukan = CURDATE() - INTERVAL 7 DAY");
                 <div class="col mr-2">
                   <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Pendapatan (Hari Ini)</div>
                   <?php
-                  // Periksa apakah $pemasukan_hari_ini adalah array dan memiliki elemen pada indeks '0'
-                  if (!empty($pemasukan_hari_ini) && isset($pemasukan_hari_ini[0])) {
-                    echo '<div class="h5 mb-0 font-weight-bold text-gray-800">Rp.' . number_format($pemasukan_hari_ini[0], 2, ',', '.') . '</div>';
+                  // $pemasukan_hari_ini sekarang adalah angka, bukan array
+                  if (!empty($pemasukan_hari_ini)) {
+                    echo '<div class="h5 mb-0 font-weight-bold text-gray-800">Rp.' . number_format($pemasukan_hari_ini, 2, ',', '.') . '</div>';
                   } else {
                     echo '<div class="h5 mb-0 font-weight-bold text-gray-800">Rp.0,00</div>';
                   }
@@ -161,9 +163,9 @@ WHERE tgl_pemasukan = CURDATE() - INTERVAL 7 DAY");
                 <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Pengeluaran (Hari Ini)</div>
                     <?php
-                    // Periksa apakah $pengeluaran_hari_ini adalah array dan memiliki elemen pada indeks '0'
-                    if (!empty($pengeluaran_hari_ini) && isset($pengeluaran_hari_ini[0])) {
-                        echo '<div class="h5 mb-0 font-weight-bold text-gray-800">Rp.' . number_format($pengeluaran_hari_ini[0], 2, ',', '.') . '</div>';
+                    // $pengeluaran_hari_ini sekarang adalah angka, bukan array
+                    if (!empty($pengeluaran_hari_ini)) {
+                        echo '<div class="h5 mb-0 font-weight-bold text-gray-800">Rp.' . number_format($pengeluaran_hari_ini, 2, ',', '.') . '</div>';
                     } else {
                         echo '<div class="h5 mb-0 font-weight-bold text-gray-800">Rp.0,00</div>';
                     }
@@ -399,7 +401,7 @@ WHERE tgl_pemasukan = CURDATE() - INTERVAL 7 DAY");
           pointHoverBorderColor: "rgba(78, 115, 223, 1)",
           pointHitRadius: 10,
           pointBorderWidth: 2,
-          data: [<?php echo $tujuhhari['0'] ?>, <?php echo $enamhari['0'] ?>, <?php echo $limahari['0'] ?>, <?php echo $empathari['0'] ?>, <?php echo $tigahari['0'] ?>, <?php echo $duahari['0'] ?>, <?php echo $satuhari['0'] ?>],
+          data: [<?php echo $tujuhhari ?>, <?php echo $enamhari ?>, <?php echo $limahari ?>, <?php echo $empathari ?>, <?php echo $tigahari ?>, <?php echo $duahari ?>, <?php echo $satuhari ?>],
         }],
       },
       options: {

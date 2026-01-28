@@ -3,7 +3,8 @@
     "allow": [
       "Bash(dir:*)",
       "Bash(findstr:*)",
-      "Bash(mysql:*)"
+      "Bash(mysql:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []
